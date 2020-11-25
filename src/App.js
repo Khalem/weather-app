@@ -18,12 +18,16 @@ class App extends React.Component {
     this.months = ['January', 'Febuarary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     this.state = {
+      date: {},
       location: [],
-      dailyTemps: []
+      dailyTemps: [],
+      hourlyTemps: []
     }
   }
 
   componentDidMount() {
+    let d = new Date();
+    this.setState({ date: d.getDate() });
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
@@ -48,8 +52,6 @@ class App extends React.Component {
     const country = COUNTRY_NAMES[data.sys.country];
     const { icon, description } = data.weather[0];
 
-
-    
     const location = {
       name,
       id,
@@ -65,7 +67,27 @@ class App extends React.Component {
       description
     };
 
-    await this.setState({ location, dailyTemps: hourData.daily });
+    /*
+    The api provides hourly data for 48hs
+    I need to just collect the temps for the hours within the date in the state
+    */ 
+
+    let hourlyTemps = [];
+    let todaysDate = new Date();
+    let today = todaysDate.getDate();
+
+    hourData.hourly.map(item => {
+      let time = item.dt - location.timezone;
+      let d = new Date(time*1000);
+
+      if (d.getDate() == this.state.date ) {
+        hourlyTemps.push(item);
+      } else {
+        return;
+      }
+    });
+
+    await this.setState({ location, dailyTemps: hourData.daily, hourlyTemps });
   }
 
   render() {
@@ -73,7 +95,7 @@ class App extends React.Component {
       <div className='App'>
         { 
           this.state.location ?
-          <WeatherCard location={this.state.location} icon={ICONS[this.state.location.icon]}/>
+          <WeatherCard location={this.state.location} icon={ICONS[this.state.location.icon]} hourlyTemps={this.state.hourlyTemps}/>
           : <h1>Loading..</h1>
         }
         <div className='daily-weather-container'>
