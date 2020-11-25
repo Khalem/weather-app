@@ -4,34 +4,16 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import './weather-card.styles.scss';
 
 const WeatherCard = ({ location, icon, hourlyTemps }) => {
-    let temp = Math.round(location.temp - 273.15);
-    let data = [];
-
-    // Creating new obj for recharts to use as data
-    hourlyTemps.map(item => {
-        let d = new Date(item.dt * 1000);
-        let hour = d.getHours();
-        let minutes = d.getMinutes();
-        let name = `${hour}:${minutes}0`;
-        let newTemp = Math.round(item.temp - 273.15);
-
-        let newObj = {
-            name,
-            temp: newTemp
-        };
-        data.push(newObj);
-    });
-
     return (
         <div className='weather-card'>
             <div className='weather-card-header'>
-                <h1 className='card-title'>{location.name} {icon} <span className='temp'>{temp}°C</span></h1>
+                <h1 className='card-title'>{location.name} {icon} <span className='temp'>{location.temp}°C</span></h1>
                 <p>{location.description}</p>
                 <h2 className='card-country'>{location.country}</h2>
             </div>
             <div className='weather-card-body'>
             <ResponsiveContainer width='100%' height={300}>
-                <AreaChart data={data}>
+                <AreaChart data={hourlyTemps}>
                     <defs>
                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#110425" stopOpacity={0.8}/>

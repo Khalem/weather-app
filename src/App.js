@@ -59,7 +59,7 @@ class App extends React.Component {
       feels_like,
       humidity,
       pressure,
-      temp,
+      temp: Math.round(temp - 273.15),
       temp_max,
       temp_min,
       country,
@@ -73,15 +73,23 @@ class App extends React.Component {
     */ 
 
     let hourlyTemps = [];
-    let todaysDate = new Date();
-    let today = todaysDate.getDate();
 
     hourData.hourly.map(item => {
       let time = item.dt - location.timezone;
       let d = new Date(time*1000);
 
       if (d.getDate() == this.state.date ) {
-        hourlyTemps.push(item);
+        let hour = d.getHours();
+        let minutes = d.getMinutes();
+        let name = `${hour}:${minutes}0`;
+        let newTemp = Math.round(item.temp - 273.15);
+
+        let newObj = {
+            name,
+            temp: newTemp
+        };
+
+        hourlyTemps.push(newObj);
       } else {
         return;
       }
