@@ -1,7 +1,7 @@
 import React from 'react';
 
 import WeatherCard from './components/weather-card/weather-card.component';
-import DailyWeather from './components/daily-weather/daily-weather.component';
+import DailyWeatherList from './components/daily-weather-list/daily-weather-list.component';
 
 import { API_KEY } from './env';
 import { COUNTRY_NAMES } from './country-names';
@@ -19,6 +19,8 @@ class App extends React.Component {
 
     this.state = {
       date: {},
+      lat: 0,
+      lon: 0,
       location: [],
       dailyTemps: [],
       hourlyTemps: []
@@ -27,25 +29,21 @@ class App extends React.Component {
 
   componentDidMount() {
     let d = new Date();
-    this.setState({ date: d.getDate() });
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
+      this.setState({ date: d.getDate(), lat, lon });
       const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
-      const hourlyUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=current,minutely,alerts&appid=${API_KEY}`;
 
-      this.callAPI(url, hourlyUrl);
+      this.getLocationData(url);
+      this.getHourlyData();
     });
   }
 
-  callAPI = async (url, hourlyUrl) => {
+  getLocationData = async (url) => {
     const response = await fetch(url);
     const data = await response.json();
     await console.log(data);
-
-    const hourResponse = await fetch(hourlyUrl);
-    const hourData = await hourResponse.json();
-    await console.log(hourData);
 
     const { name, id, timezone  } = data;
     const { feels_like, humidity, pressure, temp, temp_max, temp_min  } = data.main;
@@ -67,15 +65,23 @@ class App extends React.Component {
       description
     };
 
-    /*
+    this.setState({ location });
+  }
+
+
+  /*
     The api provides hourly data for 48hs
     I need to just collect the temps for the hours within the date in the state
     */ 
+  getHourlyData = async () => {
+    const hourResponse = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${this.state.lat}&lon=${this.state.lon}&exclude=current,minutely,alerts&appid=${API_KEY}`);
+    const hourData = await hourResponse.json();
+    await console.log(hourData);
 
     let hourlyTemps = [];
 
-    hourData.hourly.map(item => {
-      let time = item.dt - location.timezone;
+    hourData.hourly.forEach(item => {
+      let time = item.dt - hourData.timezone_offset;
       let d = new Date(time*1000);
 
       if (d.getDate() == this.state.date ) {
@@ -95,7 +101,14 @@ class App extends React.Component {
       }
     });
 
-    await this.setState({ location, dailyTemps: hourData.daily, hourlyTemps });
+    this.setState({ dailyTemps: hourData.daily, hourlyTemps });
+  }
+
+
+  handleDailyClick = date => {
+    this.setState({ date: date.getDate() });
+    this.getHourlyData();
+
   }
 
   render() {
@@ -103,25 +116,20 @@ class App extends React.Component {
       <div className='App'>
         { 
           this.state.location ?
-          <WeatherCard location={this.state.location} icon={ICONS[this.state.location.icon]} hourlyTemps={this.state.hourlyTemps}/>
+          <WeatherCard 
+            location={this.state.location} 
+            icon={ICONS[this.state.location.icon]} 
+            hourlyTemps={this.state.hourlyTemps}
+          />
           : <h1>Loading..</h1>
         }
-        <div className='daily-weather-container'>
-          {
-            this.state.dailyTemps.map((dailyTemp, index) => {
-              let d = new Date();
-              d.setDate(d.getDate() + index);
-              let day = this.days[d.getDay()];
-              let date = d.getDate();
-              let month = this.months[d.getMonth()];
-
-              return (
-                <DailyWeather day={day} date={date} month={month} key={index} dailyTemp={dailyTemp} icon={ICONS[dailyTemp.weather[0].icon]}/>
-              );
-            }
-            )
-          }
-        </div>
+        <DailyWeatherList 
+          dailyTemps={this.state.dailyTemps} 
+          icons={ICONS} 
+          days={this.days} 
+          months={this.months} 
+          handleDailyClick={this.handleDailyClick}
+        />
       </div>
     );
   }

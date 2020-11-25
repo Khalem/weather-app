@@ -1,4 +1,8 @@
 .weather-card {
+    background-color: #252054;
+    padding: 3rem;
+    border-radius: 30px;
+
     h1 {
         font-size: 48px;
         font-weight: 400;
@@ -19,7 +23,22 @@
         margin: 0 0 0 25px;
     }
 
-    .recharts-cartesian-axis-tick {
-        font-size: 12px;
+    .weather-card-body {
+        height: 400px;
+
+        h2 {
+            font-weight: 300;
+            opacity: .3;
+        }
+        
+        line {
+            stroke: rgba(255, 255, 255, .1);
+        }
+
+        .recharts-cartesian-axis-tick {
+            color: white;
+            font-size: 12px;
+            opacity: .25;
+        }
     }
 }

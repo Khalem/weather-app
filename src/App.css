@@ -5,9 +5,3 @@
   background-color: #120f2e;
   color: white;
 }
-
-.daily-weather-container {
-  display: flex;
-  padding: 3rem 1rem;
-  overflow-x: auto;
-}
