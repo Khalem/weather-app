@@ -1,4 +1,13 @@
 .App {
   font-family: 'Roboto', sans-serif;
   padding: 50px 100px;
+  height: 100vh;
+  background-color: #120f2e;
+  color: white;
+}
+
+.daily-weather-container {
+  display: flex;
+  padding: 3rem 1rem;
+  overflow-x: auto;
 }
