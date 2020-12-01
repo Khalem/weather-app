@@ -15,7 +15,7 @@ const WeatherCard = ({ location, icon, hourlyTemps, date, time, days, months }) 
     };
 
     const d = new Date();
-    time = d.getDate() != date.getDate() ? '' : time;
+    // time = d.getDate() != date.getDate() ? '' : time;
     const dateStr = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
 
     return (
@@ -36,7 +36,7 @@ const WeatherCard = ({ location, icon, hourlyTemps, date, time, days, months }) 
                 {
                     hourlyTemps.length ? 
                     <ResponsiveContainer width='100%' height={300}>
-                        <AreaChart data={hourlyTemps}>
+                        <AreaChart data={hourlyTemps} stackOffset='sign'>
                             <defs>
                             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#110425" stopOpacity={0.8}/>
@@ -47,7 +47,7 @@ const WeatherCard = ({ location, icon, hourlyTemps, date, time, days, months }) 
                             <XAxis dataKey="name" angle={45} textAnchor="start"  />
                             <YAxis />
                             <Tooltip formatter={value => `${value}°C`} contentStyle={tooltipStyles}/>
-                            <Area type="natural" dataKey="temp" stroke="#4c00ff" fill="url(#colorUv)" />
+                            <Area type="natural" dataKey="temp" stroke="#e700ff" fill="url(#colorUv)" />
                         </AreaChart>
                     </ResponsiveContainer>
                     :

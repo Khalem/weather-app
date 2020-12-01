@@ -2,6 +2,7 @@ import React from 'react';
 
 import WeatherCard from './components/weather-card/weather-card.component';
 import DailyWeatherList from './components/daily-weather-list/daily-weather-list.component';
+import OtherLocations from './components/other-locations/other-locations.component';
 
 import { API_KEY } from './env';
 import { COUNTRY_NAMES } from './country-names';
@@ -22,9 +23,11 @@ class App extends React.Component {
       lat: 0,
       lon: 0,
       location: [],
+      otherLocations: [],
       dailyTemps: [],
       hourlyTemps: [],
-      time: ''
+      time: '',
+      toggleTime: true
     }
   }
 
@@ -36,6 +39,7 @@ class App extends React.Component {
       const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
 
       this.getLocationData(url);
+      this.getNearbyLocationData();
       this.getHourlyData();
 
       this.intervalID = setInterval(
@@ -51,28 +55,39 @@ class App extends React.Component {
 
   tick() {
     const d = new Date();
-    const hours = d.getHours() < 10 ? `0${d.getHours()}` : d.getHours();
+    const hourDate = new Date((this.state.location.dt + this.state.location.timezone) * 1000);
+    const hours = hourDate.getHours() < 10 ? `0${hourDate.getHours()}` : hourDate.getHours();
     const minutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : d.getMinutes();
     const seconds = d.getSeconds() < 10 ? `0${d.getSeconds()}` : d.getSeconds();
     
     this.setState({
-      time: `${hours}:${minutes}:${seconds}`
+      time: this.state.toggleTime === true ? `${hours}:${minutes}:${seconds}` : ''
     });
   }
 
-  getLocationData = async (url) => {
+  getLocationData = async url => {
     const response = await fetch(url);
     const data = await response.json();
     await console.log(data);
 
-    const { name, id, timezone  } = data;
+    const location = this.cleanData(data);
+
+    this.setState({ location });
+  }
+
+  cleanData = data => {
+    const { name, id, timezone, dt  } = data;
     const { feels_like, humidity, pressure, temp, temp_max, temp_min  } = data.main;
     const country = COUNTRY_NAMES[data.sys.country];
     const { icon, description } = data.weather[0];
+    const { lon, lat } = data.coord;
 
     const location = {
       name,
       id,
+      lon,
+      lat,
+      dt,
       timezone,
       feels_like,
       humidity,
@@ -85,8 +100,33 @@ class App extends React.Component {
       description
     };
 
-    this.setState({ location });
+    return location;
   }
+
+
+  getNearbyLocationData = async () => {
+    let locations = ['London', 'New York', 'Tokyo', 'Sydney', 'Cape Town', 'Cairo', 'Paris', 'Los Angeles', 'Moscow', 'Singapore'];
+    // Shuffle Array using the Durstenfeld Shuffle
+    for (let i = locations.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      let temp = locations[i];
+      locations[i] = locations[j];
+      locations[j] = temp;
+    }
+
+    const otherLocations = [];
+
+    // Get data for half of the array
+    for (let i = 0; i < Math.round(locations.length / 2); i++) {
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${locations[i]}&appid=${API_KEY}`);
+      const data = await response.json();
+      console.log(data);
+      otherLocations.push(this.cleanData(data));
+    }
+
+    await this.setState({ otherLocations });
+    console.log(this.state.otherLocations, 'otherLocations State');
+  } 
 
 
   /*
@@ -98,19 +138,19 @@ class App extends React.Component {
     const hourData = await hourResponse.json();
     await console.log(hourData);
 
-    let hourlyTemps = [];
+    const hourlyTemps = [];
 
     hourData.hourly.forEach(item => {
-      let time = item.dt - hourData.timezone_offset;
-      let d = new Date(time*1000);
+      const time = item.dt + hourData.timezone_offset;
+      const d = new Date(time*1000);
 
       if (d.getDate() === this.state.date.getDate() ) {
-        let hour = d.getHours();
-        let minutes = d.getMinutes();
-        let name = `${hour}:${minutes}0`;
-        let newTemp = Math.round(item.temp - 273.15);
+        const hour = d.getHours();
+        const minutes = d.getMinutes();
+        const name = `${hour}:${minutes}0`;
+        const newTemp = Math.round(item.temp - 273.15);
 
-        let newObj = {
+        const newObj = {
             name,
             temp: newTemp
         };
@@ -122,20 +162,27 @@ class App extends React.Component {
     });
 
     let location = this.state.location;
-    const currentDate = new Date();
-    const differenceTime = Math.abs(this.state.date - currentDate);
-    const difference = Math.ceil(differenceTime / (1000 * 60 * 60 * 24 ));
-    if (this.state.date.getDate() !== currentDate.getDate()) {
-      location.temp = Math.round(hourData.daily[difference].temp.day - 273.15);
-      location.description = hourData.daily[difference].weather[0].description;
-      location.icon = hourData.daily[difference].weather[0].icon;
-    } else {
-      location.temp = Math.round(hourData.daily[0].temp.day - 273.15);
-      location.description = hourData.daily[0].weather[0].description;
-      location.icon = hourData.daily[0].weather[0].icon;
-    }
 
-    this.setState({ location, dailyTemps: hourData.daily, hourlyTemps });
+    hourData.daily.forEach(item => {
+      const time = item.dt + hourData.timezone_offset;
+      const d = new Date(time*1000);
+ 
+      if (d.getDate() === this.state.date.getDate()) {
+        location.temp = Math.round(item.temp.day - 273.15);
+        location.description = item.weather[0].description;
+        location.icon = item.weather[0].icon;
+      }
+    });
+
+    const locationDate = new Date((location.dt + location.timezone) * 1000);
+    const toggleTime = locationDate.getDate() === this.state.date.getDate() ? true : false
+
+    this.setState({ 
+      location, 
+      dailyTemps: hourData.daily, 
+      hourlyTemps, 
+      toggleTime
+    });
   }
 
   handleDailyClick = date => {
@@ -143,22 +190,43 @@ class App extends React.Component {
     this.getHourlyData();
   }
 
+  /*
+    Change location data based off location clicked, update data also
+    as different timezones might give different dates
+  */
+  handleLocationClick = async location => {
+    await this.setState({ 
+      location, 
+      lat: location.lat, 
+      lon: location.lon,
+      date: new Date((location.dt + location.timezone) * 1000)
+    });
+    this.getHourlyData(); 
+  }
+
   render() {
     return (
       <div className='App'>
-        { 
-          this.state.location ?
-          <WeatherCard 
-            location={this.state.location} 
-            icon={ICONS[this.state.location.icon]} 
-            hourlyTemps={this.state.hourlyTemps}
-            date={this.state.date}
-            time={this.state.time}
-            days={this.days} 
-            months={this.months} 
+        <div className='weather-and-locations'>
+          { 
+            this.state.location ?
+            <WeatherCard 
+              location={this.state.location} 
+              icon={ICONS[this.state.location.icon]} 
+              hourlyTemps={this.state.hourlyTemps}
+              date={this.state.date}
+              time={this.state.time}
+              days={this.days} 
+              months={this.months} 
+            />
+            : <h1>Loading..</h1>
+          }
+          <OtherLocations 
+            locations={this.state.otherLocations} 
+            changeLocation={this.handleLocationClick} 
+            icons={ICONS}
           />
-          : <h1>Loading..</h1>
-        }
+        </div>
         <DailyWeatherList 
           dailyTemps={this.state.dailyTemps} 
           icons={ICONS} 
