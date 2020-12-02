@@ -1,11 +1,15 @@
 .App {
   font-family: 'Roboto', sans-serif;
   padding: 50px 100px;
-  height: 100%;
-  background-color: #120f2e;
+  min-height: 100vh;
+  background-color: #100f1d;
   color: white;
 }
 
 .weather-and-locations {
   display: flex;
+
+  .locations {
+    width: 35%;
+  }
 }

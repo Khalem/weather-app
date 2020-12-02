@@ -3,12 +3,13 @@ import React from 'react';
 import WeatherCard from './components/weather-card/weather-card.component';
 import DailyWeatherList from './components/daily-weather-list/daily-weather-list.component';
 import OtherLocations from './components/other-locations/other-locations.component';
+import Search from './components/search/search.component';
 
 import { API_KEY } from './env';
 import { COUNTRY_NAMES } from './country-names';
 import { ICONS } from './svgsImport';
 
-import './App.css';
+import './App.scss';
 
 
 class App extends React.Component {
@@ -27,7 +28,9 @@ class App extends React.Component {
       dailyTemps: [],
       hourlyTemps: [],
       time: '',
-      toggleTime: true
+      toggleTime: true,
+      q: '',
+      searched: false
     }
   }
 
@@ -166,8 +169,9 @@ class App extends React.Component {
     hourData.daily.forEach(item => {
       const time = item.dt + hourData.timezone_offset;
       const d = new Date(time*1000);
- 
-      if (d.getDate() === this.state.date.getDate()) {
+      
+      // change location data based on if user has selected a future day
+      if (d.getDate() === this.state.date.getDate() && item != hourData.daily[0]) {
         location.temp = Math.round(item.temp.day - 273.15);
         location.description = item.weather[0].description;
         location.icon = item.weather[0].icon;
@@ -204,6 +208,21 @@ class App extends React.Component {
     this.getHourlyData(); 
   }
 
+  handleSearchChange = e => {
+    this.setState({ q: e.target.value });
+  }
+
+  handleSubmit = async e => {
+    e.preventDefault();
+
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.state.q}&appid=${API_KEY}`);
+    const data = await response.json();
+    console.log(data);
+    const otherLocations = data.cod === '404' ? [] : [this.cleanData(data)];
+
+    await this.setState({ otherLocations, q: '' });
+  }
+
   render() {
     return (
       <div className='App'>
@@ -221,11 +240,18 @@ class App extends React.Component {
             />
             : <h1>Loading..</h1>
           }
-          <OtherLocations 
-            locations={this.state.otherLocations} 
-            changeLocation={this.handleLocationClick} 
-            icons={ICONS}
-          />
+          <div className='locations'>
+            <Search 
+              q={this.state.q} 
+              handleSearchChange={this.handleSearchChange}
+              handleSubmit={this.handleSubmit}
+            />
+            <OtherLocations 
+              locations={this.state.otherLocations} 
+              changeLocation={this.handleLocationClick} 
+              icons={ICONS}
+            />
+          </div>
         </div>
         <DailyWeatherList 
           dailyTemps={this.state.dailyTemps} 

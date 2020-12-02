@@ -47,7 +47,7 @@ const WeatherCard = ({ location, icon, hourlyTemps, date, time, days, months }) 
                             <XAxis dataKey="name" angle={45} textAnchor="start"  />
                             <YAxis />
                             <Tooltip formatter={value => `${value}°C`} contentStyle={tooltipStyles}/>
-                            <Area type="natural" dataKey="temp" stroke="#e700ff" fill="url(#colorUv)" />
+                            <Area type="natural" dataKey="temp" stroke="#ff9369" fill="url(#colorUv)" />
                         </AreaChart>
                     </ResponsiveContainer>
                     :

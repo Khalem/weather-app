@@ -5,6 +5,7 @@ import './other-locations.styles.scss';
 const OtherLocations = props => (
     <div className='other-locations-container'>
         {
+            props.locations.length ?
             props.locations.map(location => (
                 <div className='other-location' onClick={() => props.changeLocation(location)} key={location.name}>
                     <h1>{location.temp}°</h1>
@@ -17,6 +18,8 @@ const OtherLocations = props => (
                     </div>
                 </div>
             ))
+            :
+            <h3 className='no-results'>We're sorry, there were no results found for that search.</h3>
         }
     </div>
 );
