@@ -119,8 +119,8 @@ class App extends React.Component {
 
     const otherLocations = [];
 
-    // Get data for half of the array
-    for (let i = 0; i < Math.round(locations.length / 2); i++) {
+    // Get data for 4 locations
+    for (let i = 0; i < Math.round(locations.length / 2.5); i++) {
       const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${locations[i]}&appid=${API_KEY}`);
       const data = await response.json();
       console.log(data);
@@ -245,6 +245,7 @@ class App extends React.Component {
               q={this.state.q} 
               handleSearchChange={this.handleSearchChange}
               handleSubmit={this.handleSubmit}
+              placeholder='Search for location..'
             />
             <OtherLocations 
               locations={this.state.otherLocations} 
@@ -260,6 +261,20 @@ class App extends React.Component {
           months={this.months} 
           handleDailyClick={this.handleDailyClick}
         />
+        <div className='locations-sm'>
+            <h2 className='locations-sm-title'>Looking for weather updates elsewhere?</h2>
+            <Search 
+              q={this.state.q} 
+              handleSearchChange={this.handleSearchChange}
+              handleSubmit={this.handleSubmit}
+              placeholder='Search..'
+            />
+            <OtherLocations 
+              locations={this.state.otherLocations} 
+              changeLocation={this.handleLocationClick} 
+              icons={ICONS}
+            />
+          </div>
       </div>
     );
   }

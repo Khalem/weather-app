@@ -1,15 +1,41 @@
 .App {
   font-family: 'Roboto', sans-serif;
-  padding: 50px 100px;
   min-height: 100vh;
+  padding: 10px;
   background-color: #100f1d;
   color: white;
-}
 
-.weather-and-locations {
-  display: flex;
+  .weather-and-locations {
+    display: flex;
+  
+    .locations {
+      display: none;
+    }
+  }
 
-  .locations {
-    width: 35%;
+  .locations-sm {
+    .locations-sm-title {
+      width: 80%;
+      text-align: center;
+      font-weight: 500;
+      line-height: 1.5rem;
+      margin: 50px auto 25px auto;
+    }
+  }
+
+  @media only screen and (min-width: 768px) {
+    padding: 10px 75px;
+  }
+
+  @media only screen and (orientation:landscape) {
+    padding: 50px 100px;
+    .locations-sm {
+      display: none;
+    }
+
+    .weather-and-locations .locations {
+      display: block;
+      width: 40%;
+    }
   }
 }
