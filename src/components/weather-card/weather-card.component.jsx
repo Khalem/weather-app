@@ -33,7 +33,7 @@ const WeatherCard = ({ location, icon, hourlyTemps, date, time, days, months }) 
             </div>
             <div className='weather-card-body'>
                 <h2>Hourly Data</h2>
-                {
+                {   
                     hourlyTemps.length ? 
                     <ResponsiveContainer width='100%' height={300}>
                         <AreaChart data={hourlyTemps} stackOffset='sign'>

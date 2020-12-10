@@ -47,6 +47,7 @@
             }
 
             p {
+                font-family: 'Source Code Pro', monospace;
                 opacity: .5;
             }
         }
@@ -96,7 +97,9 @@
         min-height: 400px;
 
         h2 {
-            font-weight: 300;
+            font-family: 'Source Code Pro', monospace;
+            font-weight: 400;
+            font-size: 18px;
             opacity: .3;
         }
         
@@ -106,7 +109,8 @@
 
         .recharts-cartesian-axis-tick {
             color: white;
-            font-size: 12px;
+            font-size: 10px;
+            font-family: 'Source Code Pro', monospace;
             opacity: .25;
         }
     }

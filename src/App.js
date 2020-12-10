@@ -4,6 +4,7 @@ import WeatherCard from './components/weather-card/weather-card.component';
 import DailyWeatherList from './components/daily-weather-list/daily-weather-list.component';
 import OtherLocations from './components/other-locations/other-locations.component';
 import Search from './components/search/search.component';
+import MediaQuery from 'react-responsive'
 
 import { API_KEY } from './env';
 import { COUNTRY_NAMES } from './country-names';
@@ -20,6 +21,8 @@ class App extends React.Component {
     this.months = ['January', 'Febuarary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     this.state = {
+      loading: true,
+      searchLoading: false,
       date: new Date(),
       lat: 0,
       lon: 0,
@@ -56,7 +59,7 @@ class App extends React.Component {
     clearInterval(this.intervalID);
   }
 
-  tick() {
+  tick = () => {
     const d = new Date();
     const hourDate = new Date((this.state.location.dt + this.state.location.timezone) * 1000);
     const hours = hourDate.getHours() < 10 ? `0${hourDate.getHours()}` : hourDate.getHours();
@@ -127,7 +130,7 @@ class App extends React.Component {
       otherLocations.push(this.cleanData(data));
     }
 
-    await this.setState({ otherLocations });
+    await this.setState({ otherLocations, loading: false });
     console.log(this.state.otherLocations, 'otherLocations State');
   } 
 
@@ -189,8 +192,8 @@ class App extends React.Component {
     });
   }
 
-  handleDailyClick = date => {
-    this.setState({ date });
+  handleDailyClick = async date => {
+    await this.setState({ date, hourDataLoading: true });
     this.getHourlyData();
   }
 
@@ -205,7 +208,7 @@ class App extends React.Component {
       lon: location.lon,
       date: new Date((location.dt + location.timezone) * 1000)
     });
-    this.getHourlyData(); 
+    await this.getHourlyData(); 
   }
 
   handleSearchChange = e => {
@@ -213,6 +216,7 @@ class App extends React.Component {
   }
 
   handleSubmit = async e => {
+    await this.setState({ searchLoading: true });
     e.preventDefault();
 
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.state.q}&appid=${API_KEY}`);
@@ -220,11 +224,16 @@ class App extends React.Component {
     console.log(data);
     const otherLocations = data.cod === '404' ? [] : [this.cleanData(data)];
 
-    await this.setState({ otherLocations, q: '' });
+    await this.setState({ otherLocations, q: '', searchLoading: false });
   }
 
   render() {
     return (
+      this.state.loading ?
+      <div className='App'>
+        <div className='lds-ripple'><div></div><div></div></div>
+      </div>
+      :
       <div className='App'>
         <div className='weather-and-locations'>
           { 
@@ -236,23 +245,26 @@ class App extends React.Component {
               date={this.state.date}
               time={this.state.time}
               days={this.days} 
-              months={this.months} 
+              months={this.months}
             />
             : <h1>Loading..</h1>
           }
-          <div className='locations'>
-            <Search 
-              q={this.state.q} 
-              handleSearchChange={this.handleSearchChange}
-              handleSubmit={this.handleSubmit}
-              placeholder='Search for location..'
-            />
-            <OtherLocations 
-              locations={this.state.otherLocations} 
-              changeLocation={this.handleLocationClick} 
-              icons={ICONS}
-            />
-          </div>
+          <MediaQuery minDeviceWidth={1280} orientation='landscape'>
+            <div className='locations'>
+              <Search 
+                q={this.state.q} 
+                handleSearchChange={this.handleSearchChange}
+                handleSubmit={this.handleSubmit}
+                placeholder='Search for location..'
+              />
+              <OtherLocations 
+                locations={this.state.otherLocations} 
+                changeLocation={this.handleLocationClick} 
+                icons={ICONS}
+                searchLoading={this.state.searchLoading}
+              />
+            </div>
+          </MediaQuery>
         </div>
         <DailyWeatherList 
           dailyTemps={this.state.dailyTemps} 
@@ -261,20 +273,23 @@ class App extends React.Component {
           months={this.months} 
           handleDailyClick={this.handleDailyClick}
         />
-        <div className='locations-sm'>
-            <h2 className='locations-sm-title'>Looking for weather updates elsewhere?</h2>
-            <Search 
-              q={this.state.q} 
-              handleSearchChange={this.handleSearchChange}
-              handleSubmit={this.handleSubmit}
-              placeholder='Search..'
-            />
-            <OtherLocations 
-              locations={this.state.otherLocations} 
-              changeLocation={this.handleLocationClick} 
-              icons={ICONS}
-            />
+        <MediaQuery maxDeviceWidth={1279}>
+          <div className='locations-sm'>
+              <h2 className='locations-sm-title'>Looking for weather updates elsewhere?</h2>
+              <Search 
+                q={this.state.q} 
+                handleSearchChange={this.handleSearchChange}
+                handleSubmit={this.handleSubmit}
+                placeholder='Search..'
+              />
+              <OtherLocations 
+                locations={this.state.otherLocations} 
+                changeLocation={this.handleLocationClick} 
+                icons={ICONS}
+                searchLoading={this.state.searchLoading}
+              />
           </div>
+        </MediaQuery>
       </div>
     );
   }

@@ -4,7 +4,8 @@ import './other-locations.styles.scss';
 
 const OtherLocations = props => (
     <div className='other-locations-container'>
-        {
+        {   props.searchLoading ? <div className='lds-ripple'><div></div><div></div></div>
+            :
             props.locations.length ?
             props.locations.map(location => (
                 <div className='other-location' onClick={() => props.changeLocation(location)} key={location.name}>
