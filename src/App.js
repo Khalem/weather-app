@@ -6,12 +6,14 @@ import OtherLocations from './components/other-locations/other-locations.compone
 import Search from './components/search/search.component';
 import MediaQuery from 'react-responsive';
 
-import { API_KEY } from './env';
 import { COUNTRY_NAMES } from './country-names';
 import { ICONS } from './svgsImport';
 
 import './App.scss';
 
+const API_KEY = process.env.REACT_APP_API_KEY;
+
+console.log(process.env);
 
 class App extends React.Component {
   constructor() {
@@ -102,7 +104,7 @@ class App extends React.Component {
       icon,
       description
     };
-    
+
     return location;
   }
 
