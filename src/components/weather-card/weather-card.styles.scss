@@ -47,7 +47,6 @@
             }
 
             p {
-                font-family: 'Source Code Pro', monospace;
                 opacity: .5;
             }
         }
@@ -69,7 +68,6 @@
                 text-align: center;
                 display: inline-block;
             }
-
 
             @media only screen and (min-width: 768px) {
                 flex-direction: column;
@@ -95,6 +93,12 @@
         justify-content: flex-start;
         align-items: center;
         min-height: 400px;
+
+        h1 {
+            text-align: center;
+            font-weight: 400;
+            opacity: .9
+        }
 
         h2 {
             font-family: 'Source Code Pro', monospace;

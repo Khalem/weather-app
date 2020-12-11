@@ -4,7 +4,7 @@ import WeatherCard from './components/weather-card/weather-card.component';
 import DailyWeatherList from './components/daily-weather-list/daily-weather-list.component';
 import OtherLocations from './components/other-locations/other-locations.component';
 import Search from './components/search/search.component';
-import MediaQuery from 'react-responsive'
+import MediaQuery from 'react-responsive';
 
 import { API_KEY } from './env';
 import { COUNTRY_NAMES } from './country-names';
@@ -65,7 +65,7 @@ class App extends React.Component {
     const hours = hourDate.getHours() < 10 ? `0${hourDate.getHours()}` : hourDate.getHours();
     const minutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : d.getMinutes();
     const seconds = d.getSeconds() < 10 ? `0${d.getSeconds()}` : d.getSeconds();
-    
+
     this.setState({
       time: this.state.toggleTime === true ? `${hours}:${minutes}:${seconds}` : ''
     });
@@ -74,10 +74,7 @@ class App extends React.Component {
   getLocationData = async url => {
     const response = await fetch(url);
     const data = await response.json();
-    await console.log(data);
-
     const location = this.cleanData(data);
-
     this.setState({ location });
   }
 
@@ -105,7 +102,7 @@ class App extends React.Component {
       icon,
       description
     };
-
+    
     return location;
   }
 
@@ -126,12 +123,10 @@ class App extends React.Component {
     for (let i = 0; i < Math.round(locations.length / 2.5); i++) {
       const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${locations[i]}&appid=${API_KEY}`);
       const data = await response.json();
-      console.log(data);
       otherLocations.push(this.cleanData(data));
     }
 
     await this.setState({ otherLocations, loading: false });
-    console.log(this.state.otherLocations, 'otherLocations State');
   } 
 
 
@@ -142,8 +137,6 @@ class App extends React.Component {
   getHourlyData = async () => {
     const hourResponse = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${this.state.lat}&lon=${this.state.lon}&exclude=current,minutely,alerts&appid=${API_KEY}`);
     const hourData = await hourResponse.json();
-    await console.log(hourData);
-
     const hourlyTemps = [];
 
     hourData.hourly.forEach(item => {
@@ -198,7 +191,7 @@ class App extends React.Component {
   }
 
   /*
-    Change location data based off location clicked, update data also
+    Change location data based off location clicked, update date also
     as different timezones might give different dates
   */
   handleLocationClick = async location => {
@@ -221,7 +214,6 @@ class App extends React.Component {
 
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.state.q}&appid=${API_KEY}`);
     const data = await response.json();
-    console.log(data);
     const otherLocations = data.cod === '404' ? [] : [this.cleanData(data)];
 
     await this.setState({ otherLocations, q: '', searchLoading: false });

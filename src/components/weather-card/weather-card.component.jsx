@@ -1,5 +1,6 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { motion } from "framer-motion";
 
 import './weather-card.styles.scss';
 
@@ -14,12 +15,30 @@ const WeatherCard = ({ location, icon, hourlyTemps, date, time, days, months }) 
         boxShadow: '0px 2px 10px 3px rgba(0,0,0,0.25)'
     };
 
-    const d = new Date();
-    // time = d.getDate() != date.getDate() ? '' : time;
+    const variants = {
+        hidden: { 
+            opacity: 0, 
+            translateY: 100 
+        },
+        visible: { 
+            opacity: 1, 
+            scale: 1, 
+            translateY: 0, 
+            transition: {
+                delay: .1
+            }
+        }
+    }
+
     const dateStr = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
 
     return (
-        <div className='weather-card'>
+        <motion.div 
+            className='weather-card'
+            initial="hidden"
+            animate="visible"
+            variants={variants}
+        >
             <div className='weather-card-header'>
                 <h1 className='card-title'>{location.temp}°</h1>
                 <div className='header-location-date'>
@@ -43,7 +62,6 @@ const WeatherCard = ({ location, icon, hourlyTemps, date, time, days, months }) 
                                 <stop offset="95%" stopColor="#130a24" stopOpacity={0}/>
                             </linearGradient>
                             </defs>
-                            {/* <CartesianGrid strokeDasharray="3 3" /> */}
                             <XAxis dataKey="name" angle={45} textAnchor="start"  />
                             <YAxis />
                             <Tooltip formatter={value => `${value}°C`} contentStyle={tooltipStyles}/>
@@ -54,7 +72,7 @@ const WeatherCard = ({ location, icon, hourlyTemps, date, time, days, months }) 
                     <h1>We're sorry, there is no hourly data available for {dateStr}</h1>
                 }
             </div>
-        </div>
+        </motion.div>
     )
 }
 
