@@ -1,0 +1,39 @@
+{
+  "files": {
+    "main.css": "/weather-app/static/css/main.44c4a3e0.chunk.css",
+    "main.js": "/weather-app/static/js/main.e41533e7.chunk.js",
+    "main.js.map": "/weather-app/static/js/main.e41533e7.chunk.js.map",
+    "runtime-main.js": "/weather-app/static/js/runtime-main.e6a45914.js",
+    "runtime-main.js.map": "/weather-app/static/js/runtime-main.e6a45914.js.map",
+    "static/js/2.769c5e72.chunk.js": "/weather-app/static/js/2.769c5e72.chunk.js",
+    "static/js/2.769c5e72.chunk.js.map": "/weather-app/static/js/2.769c5e72.chunk.js.map",
+    "index.html": "/weather-app/index.html",
+    "static/css/main.44c4a3e0.chunk.css.map": "/weather-app/static/css/main.44c4a3e0.chunk.css.map",
+    "static/js/2.769c5e72.chunk.js.LICENSE.txt": "/weather-app/static/js/2.769c5e72.chunk.js.LICENSE.txt",
+    "static/media/01d.abecb048.svg": "/weather-app/static/media/01d.abecb048.svg",
+    "static/media/01n.51aec2f2.svg": "/weather-app/static/media/01n.51aec2f2.svg",
+    "static/media/02d.079f7860.svg": "/weather-app/static/media/02d.079f7860.svg",
+    "static/media/02n.387b0bfb.svg": "/weather-app/static/media/02n.387b0bfb.svg",
+    "static/media/03d.5b308fab.svg": "/weather-app/static/media/03d.5b308fab.svg",
+    "static/media/03n.5b308fab.svg": "/weather-app/static/media/03n.5b308fab.svg",
+    "static/media/04d.5b308fab.svg": "/weather-app/static/media/04d.5b308fab.svg",
+    "static/media/04n.5b308fab.svg": "/weather-app/static/media/04n.5b308fab.svg",
+    "static/media/09d.22bb42d5.svg": "/weather-app/static/media/09d.22bb42d5.svg",
+    "static/media/09n.22bb42d5.svg": "/weather-app/static/media/09n.22bb42d5.svg",
+    "static/media/10d.b22e2998.svg": "/weather-app/static/media/10d.b22e2998.svg",
+    "static/media/10n.91a4edfc.svg": "/weather-app/static/media/10n.91a4edfc.svg",
+    "static/media/11d.a2d0dc3a.svg": "/weather-app/static/media/11d.a2d0dc3a.svg",
+    "static/media/11n.a2d0dc3a.svg": "/weather-app/static/media/11n.a2d0dc3a.svg",
+    "static/media/13d.6e7ef8ee.svg": "/weather-app/static/media/13d.6e7ef8ee.svg",
+    "static/media/13n.6e7ef8ee.svg": "/weather-app/static/media/13n.6e7ef8ee.svg",
+    "static/media/50d.364fe5e4.svg": "/weather-app/static/media/50d.364fe5e4.svg",
+    "static/media/50n.364fe5e4.svg": "/weather-app/static/media/50n.364fe5e4.svg",
+    "static/media/search.f9705ffe.svg": "/weather-app/static/media/search.f9705ffe.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e6a45914.js",
+    "static/js/2.769c5e72.chunk.js",
+    "static/css/main.44c4a3e0.chunk.css",
+    "static/js/main.e41533e7.chunk.js"
+  ]
+}
