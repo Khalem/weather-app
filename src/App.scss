@@ -27,7 +27,7 @@
     padding: 10px 75px;
   }
 
-  @media only screen and (orientation:landscape) {
+  @media only screen and (orientation:landscape) and (min-width: 1024px) {
     padding: 50px 100px;
   }
 }
